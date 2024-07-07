@@ -1,5 +1,4 @@
-// swift-tools-version: 5.6
-
+// swift-tools-version: 5.9
 
 import PackageDescription
 
@@ -9,13 +8,8 @@ let package = Package(
     products: [
         .library(
             name: "BottomCard",
-            targets: ["BottomCard"]),
+            targets: ["BottomCard"]
+        ),
     ],
-    dependencies: [],
-    targets: [
-        .target(
-            name: "BottomCard",
-            dependencies: []
-        )
-    ]
+    targets: [.target(name: "BottomCard")]
 )

@@ -34,12 +34,13 @@ class BottomCardQueuePresenter {
     static let shared = BottomCardQueuePresenter()
 
     init() {
-        NotificationCenter.default.addObserver(forName: .didDismissPresentedViewController, object: nil, queue: nil) { _ in
-            self.isPresenting = false
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                self.showNextAlertIfPresent()
+        NotificationCenter.default
+            .addObserver(forName: .didDismissPresentedViewController, object: nil, queue: nil) { _ in
+                self.isPresenting = false
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    self.showNextAlertIfPresent()
+                }
             }
-        }
     }
 
     // MARK: - Present

@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by longvu on 25/05/2022.
 //
@@ -40,7 +40,11 @@ class BottomCardAnimatedTransitioning: NSObject, UIViewControllerAnimatedTransit
                                                          width: targetViewFrame.width,
                                                          height: targetViewFrame.height)
 
-            let animator = UIViewPropertyAnimator(duration: 0.21, controlPoint1: CGPoint(x: 0.05, y: 0.76), controlPoint2: CGPoint(x: 0.42, y: 0.94)) {
+            let animator = UIViewPropertyAnimator(
+                duration: 0.21,
+                controlPoint1: CGPoint(x: 0.05, y: 0.76),
+                controlPoint2: CGPoint(x: 0.42, y: 0.94)
+            ) {
                 presentingViewController.view.frame = targetViewFrame
             }
 
@@ -51,6 +55,7 @@ class BottomCardAnimatedTransitioning: NSObject, UIViewControllerAnimatedTransit
 
                 case .current, .start:
                     break
+
                 @unknown default:
                     break
                 }
@@ -67,7 +72,11 @@ class BottomCardAnimatedTransitioning: NSObject, UIViewControllerAnimatedTransit
                                          width: dismissingViewController.view.frame.width,
                                          height: dismissingViewController.view.frame.height)
 
-            let animator = UIViewPropertyAnimator(duration: 0.21, controlPoint1: CGPoint(x: 0.05, y: 0.76), controlPoint2: CGPoint(x: 0.42, y: 0.94)) {
+            let animator = UIViewPropertyAnimator(
+                duration: 0.21,
+                controlPoint1: CGPoint(x: 0.05, y: 0.76),
+                controlPoint2: CGPoint(x: 0.42, y: 0.94)
+            ) {
                 dismissingViewController.view.frame = dismissingFrame
             }
 
@@ -78,6 +87,7 @@ class BottomCardAnimatedTransitioning: NSObject, UIViewControllerAnimatedTransit
 
                 case .current, .start:
                     break
+
                 @unknown default:
                     break
                 }

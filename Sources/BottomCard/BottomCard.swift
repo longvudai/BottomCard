@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by longvu on 25/05/2022.
 //
@@ -8,7 +8,11 @@
 import UIKit
 
 public extension UIViewController {
-    func presentAsBottomCard(for targetViewController: UIViewController, animated: Bool, completionHandler: (() -> Void)? = nil) {
+    func presentAsBottomCard(
+        for targetViewController: UIViewController,
+        animated: Bool,
+        completionHandler: (() -> Void)? = nil
+    ) {
         presentAsBottomCard(
             configuration: ButtomCardConfiguration(),
             for: targetViewController,

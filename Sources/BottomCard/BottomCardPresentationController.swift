@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by longvu on 25/05/2022.
 //
@@ -49,12 +49,13 @@ class BottomCardPresentationController: UIPresentationController {
         return v
     }()
 
-    private lazy var presentingViewSnapshot: UIView? = presentingViewController.view.snapshotView(afterScreenUpdates: true)
+    private lazy var presentingViewSnapshot: UIView? = presentingViewController.view
+        .snapshotView(afterScreenUpdates: true)
 
     private var widthOffset: CGFloat { configuration.widthOffset }
     private var bottomOffset: CGFloat { configuration.bottomOffset }
     private var maximumContentSize: CGSize {
-        guard let containerView = containerView else {
+        guard let containerView else {
             return .zero
         }
 
@@ -77,19 +78,19 @@ class BottomCardPresentationController: UIPresentationController {
     ) {
         self.configuration = configuration
         super.init(presentedViewController: presentedViewController, presenting: presentingViewController)
-        
+
         setupKeyboardSubscriptionsIfNeeded()
     }
-    
+
     private func setupKeyboardSubscriptionsIfNeeded() {
         if configuration.isObserveKeyboard {
             cancellableSet = []
-            
+
             let kbPresentation = keyboardManager.keyboardPresetationInfo
                 .removeDuplicates(by: { $0.keyboardSize.height == $1.keyboardSize.height })
 
             kbPresentation
-                .map { $0.keyboardSize.height }
+                .map(\.keyboardSize.height)
                 .sink(receiveValue: { [weak self] value in
                     self?.keyboardHeight.value = value
                 })
@@ -97,7 +98,7 @@ class BottomCardPresentationController: UIPresentationController {
 
             keyboardHeight
                 .withLatestFrom(kbPresentation, resultSelector: { $1 })
-                .map { $0.animationDuration }
+                .map(\.animationDuration)
                 .sink(receiveValue: { [weak self] animationDuration in
                     UIView.animate(
                         withDuration: animationDuration,
@@ -170,11 +171,11 @@ class BottomCardPresentationController: UIPresentationController {
 
     override func presentationTransitionWillBegin() {
         super.presentationTransitionWillBegin()
-        guard let containerView = containerView else {
+        guard let containerView else {
             return
         }
 
-        if let presentingViewSnapshot = presentingViewSnapshot, configuration.isSnapshotBackground {
+        if let presentingViewSnapshot, configuration.isSnapshotBackground {
             containerView.addSubview(presentingViewSnapshot)
         }
 
@@ -227,7 +228,11 @@ private extension BottomCardPresentationController {
             return keyboardPresetationInfoSubject.eraseToAnyPublisher()
         }
 
-        private var keyboardPresetationInfoSubject = CurrentValueSubject<KeyboardPresetationInfo, Never>(KeyboardPresetationInfo(animationDuration: 0, keyboardSize: .zero))
+        private var keyboardPresetationInfoSubject = CurrentValueSubject<KeyboardPresetationInfo,
+            Never>(KeyboardPresetationInfo(
+            animationDuration: 0,
+            keyboardSize: .zero
+        ))
 
         private let notificationCenter = NotificationCenter.default
         private var cancellableSet = Set<AnyCancellable>()
@@ -237,8 +242,12 @@ private extension BottomCardPresentationController {
         init() {
             let kbWillHide = notificationCenter.publisher(for: UIResponder.keyboardWillHideNotification)
                 .compactMap { notification -> KeyboardPresetationInfo? in
-                    if let animationTime = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber {
-                        return KeyboardPresetationInfo(animationDuration: TimeInterval(animationTime.intValue), keyboardSize: .zero)
+                    if let animationTime = notification
+                        .userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber {
+                        return KeyboardPresetationInfo(
+                            animationDuration: TimeInterval(animationTime.intValue),
+                            keyboardSize: .zero
+                        )
                     } else {
                         return nil
                     }
@@ -246,9 +255,14 @@ private extension BottomCardPresentationController {
 
             let kbWillShow = notificationCenter.publisher(for: UIResponder.keyboardWillShowNotification)
                 .compactMap { notification -> KeyboardPresetationInfo? in
-                    if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
-                       let animationTime = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber {
-                        return KeyboardPresetationInfo(animationDuration: TimeInterval(animationTime.intValue), keyboardSize: keyboardSize.size)
+                    if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?
+                        .cgRectValue,
+                        let animationTime = notification
+                        .userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber {
+                        return KeyboardPresetationInfo(
+                            animationDuration: TimeInterval(animationTime.intValue),
+                            keyboardSize: keyboardSize.size
+                        )
                     } else {
                         return nil
                     }
