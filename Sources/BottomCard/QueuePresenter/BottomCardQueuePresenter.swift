@@ -5,6 +5,7 @@
 import Foundation
 import UIKit
 
+@MainActor
 class BottomCardQueuePresenter {
     struct ViewControllerPair {
         let presentingViewController: UIViewController
@@ -34,13 +35,18 @@ class BottomCardQueuePresenter {
     static let shared = BottomCardQueuePresenter()
 
     init() {
-        NotificationCenter.default
-            .addObserver(forName: .didDismissPresentedViewController, object: nil, queue: nil) { _ in
+        NotificationCenter.default.addObserver(
+            forName: .didDismissPresentedViewController,
+            object: nil,
+            queue: nil
+        ) { _ in
+            DispatchQueue.main.async {
                 self.isPresenting = false
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                     self.showNextAlertIfPresent()
                 }
             }
+        }
     }
 
     // MARK: - Present
