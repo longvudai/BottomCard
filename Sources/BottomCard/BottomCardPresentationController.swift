@@ -52,8 +52,14 @@ class BottomCardPresentationController: UIPresentationController {
     private lazy var presentingViewSnapshot: UIView? = presentingViewController.view
         .snapshotView(afterScreenUpdates: true)
 
-    private var widthOffset: CGFloat { configuration.widthOffset }
-    private var bottomOffset: CGFloat { configuration.bottomOffset }
+    private var widthOffset: CGFloat {
+        configuration.widthOffset
+    }
+
+    private var bottomOffset: CGFloat {
+        configuration.bottomOffset
+    }
+
     private var maximumContentSize: CGSize {
         guard let containerView else {
             return .zero
@@ -152,14 +158,12 @@ class BottomCardPresentationController: UIPresentationController {
             )
         }
 
-        let newFrame = CGRect(
+        return CGRect(
             x: containerView.bounds.midX - (contentSize.width / 2),
             y: containerView.bounds.height - contentSize.height - bottomOffset - keyboardHeight.value,
             width: contentSize.width,
             height: min(UIScreen.main.bounds.height, contentSize.height)
         )
-
-        return newFrame
     }
 
     override func containerViewWillLayoutSubviews() {

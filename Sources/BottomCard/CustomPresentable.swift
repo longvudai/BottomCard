@@ -15,8 +15,13 @@ public protocol CustomPresentable: UIViewController {
 }
 
 public extension CustomPresentable {
-    var dismissalHandlingScrollView: UIScrollView? { nil }
-    var transitionManager: UIViewControllerTransitioningDelegate? { nil }
+    var dismissalHandlingScrollView: UIScrollView? {
+        nil
+    }
+
+    var transitionManager: UIViewControllerTransitioningDelegate? {
+        nil
+    }
 
     func updatePresentationLayout(animated: Bool = true) {
         presentationController?.containerView?.setNeedsLayout()
