@@ -162,7 +162,7 @@ class BottomCardPresentationController: UIPresentationController {
             x: containerView.bounds.midX - (contentSize.width / 2),
             y: containerView.bounds.height - contentSize.height - bottomOffset - keyboardHeight.value,
             width: contentSize.width,
-            height: min(UIScreen.main.bounds.height, contentSize.height)
+            height: min(containerView.bounds.height, contentSize.height)
         )
     }
 
