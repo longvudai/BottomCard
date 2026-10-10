@@ -11,5 +11,11 @@ let package = Package(
             targets: ["BottomCard"]
         ),
     ],
-    targets: [.target(name: "BottomCard")]
+    targets: [
+        .target(name: "BottomCard"),
+        .testTarget(
+            name: "BottomCardTests",
+            dependencies: ["BottomCard"]
+        ),
+    ]
 )

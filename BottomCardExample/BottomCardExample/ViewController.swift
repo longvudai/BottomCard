@@ -9,14 +9,22 @@ import BottomCard
 import UIKit
 
 class ViewController: UIViewController {
-    private lazy var targetViewController = TargetViewController()
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
 
-        DispatchQueue.main.async {
-            self.presentAsBottomCard(for: self.targetViewController, animated: true)
-        }
+        let showButton = UIButton(
+            configuration: .filled(),
+            primaryAction: UIAction(title: "Show Bottom Card") { [weak self] _ in
+                self?.presentAsBottomCard(for: TargetViewController(), animated: true)
+            }
+        )
+        showButton.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(showButton)
+
+        NSLayoutConstraint.activate([
+            showButton.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            showButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32),
+        ])
     }
 }
 
