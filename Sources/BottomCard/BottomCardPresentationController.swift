@@ -158,11 +158,44 @@ class BottomCardPresentationController: UIPresentationController {
             )
         }
 
+        let placement = BottomCardFoldPlacement.horizontalPlacement(
+            containerBounds: containerView.bounds,
+            division: activeVerticalDivision(in: containerView),
+            isBarOnPhysicalLeft: isBarOnPhysicalLeft(in: containerView),
+            contentWidth: contentSize.width,
+            widthOffset: widthOffset
+        )
+
         return CGRect(
-            x: containerView.bounds.midX - (contentSize.width / 2),
+            x: placement.x,
             y: containerView.bounds.height - contentSize.height - bottomOffset - keyboardHeight.value,
-            width: contentSize.width,
+            width: placement.width,
             height: min(containerView.bounds.height, contentSize.height)
+        )
+    }
+
+    /// The first active fold that runs top to bottom, or nil before iOS 27.1.
+    private func activeVerticalDivision(in containerView: UIView) -> CGRect? {
+        guard #available(iOS 27.1, *) else {
+            return nil
+        }
+        return containerView.reservedRegions(kind: .division)
+            .first { $0.isActive && $0.frame.height >= $0.frame.width }?
+            .frame
+    }
+
+    private func isBarOnPhysicalLeft(in containerView: UIView) -> Bool {
+        guard #available(iOS 27.1, *) else {
+            return false
+        }
+        let edge: BottomCardFoldPlacement.BarEdge = switch containerView.traitCollection.verticalBarEdge {
+        case .leading: .leading
+        case .trailing: .trailing
+        default: .unspecified
+        }
+        return BottomCardFoldPlacement.isBarOnPhysicalLeft(
+            edge: edge,
+            isRightToLeft: containerView.effectiveUserInterfaceLayoutDirection == .rightToLeft
         )
     }
 
