@@ -174,29 +174,37 @@ class BottomCardPresentationController: UIPresentationController {
         )
     }
 
-    /// The first active fold that runs top to bottom, or nil before iOS 27.1.
+    /// The first active fold that runs top to bottom, or nil before iOS 27.1 and on Mac Catalyst.
     private func activeVerticalDivision(in containerView: UIView) -> CGRect? {
-        guard #available(iOS 27.1, *) else {
+        #if targetEnvironment(macCatalyst)
             return nil
-        }
-        return containerView.reservedRegions(kind: .division)
-            .first { $0.isActive && $0.frame.height >= $0.frame.width }?
-            .frame
+        #else
+            guard #available(iOS 27.1, *) else {
+                return nil
+            }
+            return containerView.reservedRegions(kind: .division)
+                .first { $0.isActive && $0.frame.height >= $0.frame.width }?
+                .frame
+        #endif
     }
 
     private func isBarOnPhysicalLeft(in containerView: UIView) -> Bool {
-        guard #available(iOS 27.1, *) else {
+        #if targetEnvironment(macCatalyst)
             return false
-        }
-        let edge: BottomCardFoldPlacement.BarEdge = switch containerView.traitCollection.verticalBarEdge {
-        case .leading: .leading
-        case .trailing: .trailing
-        default: .unspecified
-        }
-        return BottomCardFoldPlacement.isBarOnPhysicalLeft(
-            edge: edge,
-            isRightToLeft: containerView.effectiveUserInterfaceLayoutDirection == .rightToLeft
-        )
+        #else
+            guard #available(iOS 27.1, *) else {
+                return false
+            }
+            let edge: BottomCardFoldPlacement.BarEdge = switch containerView.traitCollection.verticalBarEdge {
+            case .leading: .leading
+            case .trailing: .trailing
+            default: .unspecified
+            }
+            return BottomCardFoldPlacement.isBarOnPhysicalLeft(
+                edge: edge,
+                isRightToLeft: containerView.effectiveUserInterfaceLayoutDirection == .rightToLeft
+            )
+        #endif
     }
 
     override func containerViewWillLayoutSubviews() {
