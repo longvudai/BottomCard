@@ -166,11 +166,19 @@ class BottomCardPresentationController: UIPresentationController {
             widthOffset: widthOffset
         )
 
+        let verticalPlacement = BottomCardVerticalPlacement.verticalPlacement(
+            containerHeight: containerView.bounds.height,
+            topInset: containerView.safeAreaInsets.top,
+            contentHeight: contentSize.height,
+            bottomOffset: bottomOffset,
+            keyboardHeight: keyboardHeight.value
+        )
+
         return CGRect(
             x: placement.x,
-            y: containerView.bounds.height - contentSize.height - bottomOffset - keyboardHeight.value,
+            y: verticalPlacement.y,
             width: placement.width,
-            height: min(containerView.bounds.height, contentSize.height)
+            height: verticalPlacement.height
         )
     }
 
