@@ -214,6 +214,14 @@ class BottomCardPresentationController: UIPresentationController {
         presentedView?.frame = frameOfPresentedViewInContainerView
     }
 
+    override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        // The snapshot can't follow a size change (rotation, fold), so show the live presenting view under it.
+        if configuration.isSnapshotBackground {
+            presentingViewSnapshot?.removeFromSuperview()
+        }
+    }
+
     override func presentationTransitionWillBegin() {
         super.presentationTransitionWillBegin()
         guard let containerView else {
