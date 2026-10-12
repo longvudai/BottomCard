@@ -67,8 +67,15 @@ class BottomCardPresentationController: UIPresentationController {
 
         let maxWidth: CGFloat = configuration.maxWidth
 
-        return CGSize(width: min(maxWidth, containerView.frame.width - widthOffset),
+        return CGSize(width: min(maxWidth, horizontalSafeBounds(of: containerView).width - widthOffset),
                       height: containerView.frame.height - bottomOffset)
+    }
+
+    /// The container's bounds without its leading and trailing safe area,
+    /// which includes the vertical bar on iPhone Duo.
+    private func horizontalSafeBounds(of containerView: UIView) -> CGRect {
+        let insets = containerView.safeAreaInsets
+        return containerView.bounds.inset(by: UIEdgeInsets(top: 0, left: insets.left, bottom: 0, right: insets.right))
     }
 
     private var cancellableSet = Set<AnyCancellable>()
@@ -159,7 +166,7 @@ class BottomCardPresentationController: UIPresentationController {
         }
 
         let placement = BottomCardFoldPlacement.horizontalPlacement(
-            containerBounds: containerView.bounds,
+            containerBounds: horizontalSafeBounds(of: containerView),
             division: activeVerticalDivision(in: containerView),
             isBarOnPhysicalLeft: isBarOnPhysicalLeft(in: containerView),
             contentWidth: contentSize.width,
