@@ -67,8 +67,15 @@ class BottomCardPresentationController: UIPresentationController {
 
         let maxWidth: CGFloat = configuration.maxWidth
 
-        return CGSize(width: min(maxWidth, containerView.frame.width - widthOffset),
+        return CGSize(width: min(maxWidth, horizontalSafeBounds(of: containerView).width - widthOffset),
                       height: containerView.frame.height - bottomOffset)
+    }
+
+    /// The container's bounds without its leading and trailing safe area,
+    /// which includes the vertical bar on iPhone Duo.
+    private func horizontalSafeBounds(of containerView: UIView) -> CGRect {
+        let insets = containerView.safeAreaInsets
+        return containerView.bounds.inset(by: UIEdgeInsets(top: 0, left: insets.left, bottom: 0, right: insets.right))
     }
 
     private var cancellableSet = Set<AnyCancellable>()
@@ -159,7 +166,7 @@ class BottomCardPresentationController: UIPresentationController {
         }
 
         let placement = BottomCardFoldPlacement.horizontalPlacement(
-            containerBounds: containerView.bounds,
+            containerBounds: horizontalSafeBounds(of: containerView),
             division: activeVerticalDivision(in: containerView),
             isBarOnPhysicalLeft: isBarOnPhysicalLeft(in: containerView),
             contentWidth: contentSize.width,
@@ -226,11 +233,24 @@ class BottomCardPresentationController: UIPresentationController {
 
         containerView.addSubview(backdropView)
 
+        applyConcentricCornersIfAvailable()
+
         presentingViewController
             .transitionCoordinator?
             .animate(alongsideTransition: { [weak self] _ in
                 self?.backdropView.alpha = 1
             }, completion: nil)
+    }
+
+    /// On iOS 26 and later, corners near the screen edge follow the display's corner curve.
+    /// The card's own corner radius stays as the minimum, so corners far from the edge keep it.
+    private func applyConcentricCornersIfAvailable() {
+        guard #available(iOS 26, *), let presentedView else {
+            return
+        }
+        presentedView.cornerConfiguration = .corners(
+            radius: .containerConcentric(minimum: presentedView.layer.cornerRadius)
+        )
     }
 
     override func dismissalTransitionWillBegin() {
