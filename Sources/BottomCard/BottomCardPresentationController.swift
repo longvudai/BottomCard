@@ -233,11 +233,24 @@ class BottomCardPresentationController: UIPresentationController {
 
         containerView.addSubview(backdropView)
 
+        applyConcentricCornersIfAvailable()
+
         presentingViewController
             .transitionCoordinator?
             .animate(alongsideTransition: { [weak self] _ in
                 self?.backdropView.alpha = 1
             }, completion: nil)
+    }
+
+    /// On iOS 26 and later, corners near the screen edge follow the display's corner curve.
+    /// The card's own corner radius stays as the minimum, so corners far from the edge keep it.
+    private func applyConcentricCornersIfAvailable() {
+        guard #available(iOS 26, *), let presentedView else {
+            return
+        }
+        presentedView.cornerConfiguration = .corners(
+            radius: .containerConcentric(minimum: presentedView.layer.cornerRadius)
+        )
     }
 
     override func dismissalTransitionWillBegin() {
